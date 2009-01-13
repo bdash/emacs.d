@@ -9,6 +9,7 @@
 (defvar macosx-p (string-match "darwin" (symbol-name system-type)))
 
 (defun find-webkit-root ()
+  "Find the root directory of the WebKit tree that contains the current buffer."
   (interactive "")
   (let ((last-directory buffer-file-name)
         (current-directory (file-name-directory buffer-file-name)))
@@ -26,6 +27,9 @@
     str))
 
 (defun dos-to-unix-path (dos-path)
+  "Convert a DOS-style path that Emacs uses into a Unix-style path used by Cygwin.
+
+Assumes that Cygwin is installed in \\cygwin on the boot volume."
   (interactive "")
   (if mswindows-p
       (let ((unix-path (shell-command-to-string (concat "\\cygwin\\bin\\cygpath -u " dos-path))))
@@ -33,11 +37,13 @@
     dos-path))
 
 (defun run-unix-command (command)
+  "Run the given command string under a Unix shell.  On Windows, this will use a Cygwin version of bash."
   (when mswindows-p
     (setq command (format "\\cygwin\\bin\\bash -i -l -c \"%s\"" command)))
   (shell-command-to-string command))
 
 (defun resolve-change-log-conflicts ()
+  "Run resolve-ChangeLogs on the current buffer."
   (interactive)
   (let* ((dos-webkit-root (find-webkit-root))
          (webkit-root (dos-to-unix-path dos-webkit-root))

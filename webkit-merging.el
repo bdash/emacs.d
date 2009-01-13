@@ -8,12 +8,14 @@
  '(change-log-version-number-regexp-list (list "Merge r\\\([0-9]+\\\)")))
 
 (defun prompt-for-svn-revision ()
+  "Prompt for a SVN revision number.  Defaults to the revision after the last merged revision."
   (let* ((prev-revision (string-to-number (change-log-version-number-search)))
          (next-revision (+ 1 prev-revision))
          (next-revision-string (format "r%s" next-revision)))
     (read-string (format "SVN revision: ") next-revision-string)))
 
 (defun add-change-log-merge-header (&optional svn-revision)
+  "Add a merge header for the given revision to the current buffer."
   (interactive (list (prompt-for-svn-revision)))
   (let* ((defun (add-log-current-defun))
          bound
@@ -83,6 +85,7 @@
   (save-excursion (re-search-forward "^<<<<<<<<" nil t)))
 
 (defun incorrect-merge-p ()
+  "Detect cases where an automatic merge of a ChangeLog buffer had incorrect results."
   (interactive "")
   (save-excursion 
     (goto-char (point-min))
@@ -96,6 +99,10 @@
            (not (entry-has-merge-header-p))))))
   
 (defun fix-incorrect-merge ()
+  "Attempt to fix an incorrect automatic merge of a ChangeLog buffer.
+
+The typical case for this is that the merge header was left at the top of the file
+rather than kept with its related ChangeLog entry."
   (interactive "")
 
   ;; If we don't have an incorrect merge in this buffer, we've probably not
