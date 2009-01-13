@@ -10,10 +10,11 @@
 (require 'webkit)
 (require 'webkit-merging)
 
+(setq-default indent-tabs-mode nil)
+
 (defun my-c-mode-common-hook ()
-  (setq tab-width 8)
-  (setq indent-tabs-mode nil)
-  (setq c-basic-offset 4))
+  (setq tab-width 8
+	c-basic-offset 4))
 
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
