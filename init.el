@@ -8,6 +8,7 @@
 (add-to-list 'exec-path "/usr/local/bin")
 
 (require 'cl)
+(require 'webkit)
 (require 'webkit-merging)
 
 (setf common-lisp-hyperspec-root "file:/Volumes/Data/Users/mrowe/Downloads/HyperSpec-7-0/HyperSpec/")
