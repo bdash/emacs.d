@@ -10,7 +10,8 @@
 (require 'webkit)
 (require 'webkit-merging)
 
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil
+              make-backup-files nil)
 
 (defun my-c-mode-common-hook ()
   (setq tab-width 8
