@@ -2,10 +2,6 @@
 
 (require 'webkit)
 
-(setq change-log-mode-hook '(lambda ()
-                              (setq indent-tabs-mode nil)
-                              (setq tab-width 4)))
-
 (custom-set-variables
  '(add-log-full-name "Mark Rowe")
  '(add-log-mailing-address "mrowe@apple.com")

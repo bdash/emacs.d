@@ -1,5 +1,10 @@
 ;; Functions to make life with WebKit easier
 
+;; ChangeLogs use 4 space indentation
+(setq change-log-mode-hook '(lambda ()
+                              (setq indent-tabs-mode nil)
+                              (setq tab-width 4)))
+
 (defvar mswindows-p (string-match "windows" (symbol-name system-type)))
 (defvar macosx-p (string-match "darwin" (symbol-name system-type)))
 
