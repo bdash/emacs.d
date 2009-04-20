@@ -9,7 +9,7 @@
 
 (defun prompt-for-svn-revision ()
   "Prompt for a SVN revision number.  Defaults to the revision after the last merged revision."
-  (let* ((prev-revision (string-to-number (change-log-version-number-search)))
+  (let* ((prev-revision (string-to-number (or (change-log-version-number-search) "40000")))
          (next-revision (+ 1 prev-revision))
          (next-revision-string (format "r%s" next-revision)))
     (read-string (format "SVN revision: ") next-revision-string)))
