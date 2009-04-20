@@ -9,6 +9,9 @@
 (require 'cl)
 (require 'webkit)
 (require 'webkit-merging)
+(require 'color-theme)
+(require 'color-theme-wombat)
+(color-theme-wombat)
 (ido-mode)
 
 (setq-default indent-tabs-mode nil
