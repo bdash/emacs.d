@@ -10,7 +10,8 @@
 (require 'webkit)
 (require 'webkit-merging)
 (require 'color-theme)
-(require 'color-theme-wombat)
+(setq color-theme-is-global t)
+(color-theme-initialize)
 (color-theme-wombat)
 (ido-mode)
 
@@ -32,6 +33,8 @@
  '(add-log-mailing-address "mrowe@apple.com")
  '(change-log-version-number-regexp-list (list "Merge r\\([0-9]+\\)"))
  '(column-number-mode t)
+ '(ns-antialias-text t)
+ '(ns-use-qd-smoothing nil)
  '(size-indication-mode t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(vc-handled-backends (quote nil)))
