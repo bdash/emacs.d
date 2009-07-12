@@ -7,6 +7,48 @@
  '(add-log-mailing-address "mrowe@apple.com")
  '(change-log-version-number-regexp-list (list "Merge r\\\([0-9]+\\\)")))
 
+(defun find-git-dir-from-file (file)
+  ""
+  (let* ((dir (file-name-directory file))
+         (command (format "cd %s && git rev-parse --git-dir 2>/dev/null" dir))
+         (output (strip-trailing-new-line (run-unix-command command))))
+    (expand-file-name output dir)))
+
+(defun fix-change-logs ()
+  ""
+  (interactive)
+  (let* ((git-dir (find-git-dir-from-file (buffer-file-name)))
+         (merge-message-file (concat git-dir "/MERGE_MSG")))
+    (unless (file-exists-p merge-message-file)
+      (error "Could not find %s.  Is a git cherry-pick in progress?" merge-message-file))
+    (with-current-buffer (find-file-noselect merge-message-file t)
+      (goto-char (point-min))
+      (fix-conflicted-change-logs)
+      (kill-buffer))))
+
+(defun extract-revision-from-git-svn-id ()
+  ""
+  (if (re-search-forward "^git-svn-id:.*@\\([^ ]+\\)")
+      (concat "r" (match-string 1))))
+  
+(defun fix-conflicted-change-logs ()
+  ""
+  (let* ((revision (extract-revision-from-git-svn-id)))
+    (message "Found revision %s" revision)
+    (goto-char (beginning-of-re-match "Conflicts:"))
+    (forward-line)
+
+    (while (not (= (point) (point-max)))
+      (when (looking-at "\t\\(.*ChangeLog\\)$")
+        (message (match-string 0))
+        (save-excursion
+          (save-window-excursion
+            (with-current-buffer (find-file-noselect (concat "../" (match-string 1)) t)
+              (resolve-change-log-conflicts)
+              (add-change-log-merge-header revision)
+              (save-buffer)))))
+      (forward-line))))
+
 (defun prompt-for-svn-revision ()
   "Prompt for a SVN revision number.  Defaults to the revision after the last merged revision."
   (let* ((prev-revision (string-to-number (or (change-log-version-number-search) "40000")))
