@@ -23,7 +23,10 @@
       (error "Could not find %s.  Is a git cherry-pick in progress?" merge-message-file))
     (with-current-buffer (find-file-noselect merge-message-file t)
       (goto-char (point-min))
-      (fix-conflicted-change-logs)
+      (let ((revision (fix-conflicted-change-logs)))
+        (with-temp-file merge-message-file
+          (erase-buffer)
+          (insert (format "Merge %s." revision))))
       (kill-buffer))))
 
 (defun extract-revision-from-git-svn-id ()
@@ -47,7 +50,8 @@
               (resolve-change-log-conflicts)
               (add-change-log-merge-header revision)
               (save-buffer)))))
-      (forward-line))))
+      (forward-line))
+    revision))
 
 (defun prompt-for-svn-revision ()
   "Prompt for a SVN revision number.  Defaults to the revision after the last merged revision."
