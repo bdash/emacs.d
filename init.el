@@ -34,6 +34,7 @@
  '(add-log-mailing-address "mrowe@apple.com")
  '(change-log-version-number-regexp-list (list "Merge r\\([0-9]+\\)"))
  '(column-number-mode t)
+ '(fill-column 120)
  '(ns-antialias-text t)
  '(ns-use-qd-smoothing nil)
  '(size-indication-mode t)
