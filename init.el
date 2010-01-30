@@ -21,7 +21,7 @@
 
 (defun my-c-mode-common-hook ()
   (setq tab-width 8
-	c-basic-offset 4))
+        c-basic-offset 4))
 
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
