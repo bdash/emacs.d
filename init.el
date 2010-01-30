@@ -17,7 +17,8 @@
 (ido-mode)
 
 (setq-default indent-tabs-mode nil
-              make-backup-files nil)
+              make-backup-files nil
+              split-width-threshold nil)
 
 (defun my-c-mode-common-hook ()
   (setq tab-width 8
