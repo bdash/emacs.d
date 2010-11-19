@@ -27,7 +27,7 @@
         (with-temp-file merge-message-file
           (erase-buffer)
           (insert (format "Merge %s." revision))))
-      (kill-buffer))))
+      (kill-buffer (current-buffer)))))
 
 (defun extract-revision-from-git-svn-id ()
   ""
