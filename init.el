@@ -1,3 +1,6 @@
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
 (add-to-list 'load-path dotfiles-dir)
@@ -91,8 +94,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:height 100)))))
-
-(set-face-background 'region "grey20")
 
 (require 'util)
 (require 'cl)
