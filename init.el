@@ -8,6 +8,7 @@
 ; Tell emacs in two different ways that it may need to look in /usr/local/bin to find git
 (setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
 (add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path exec-directory)
 
 (when (require 'package nil t)
   (add-to-list 'package-archives
@@ -24,7 +25,8 @@
                         paredit
                         rainbow-delimiters
                         auto-complete
-                        ac-nrepl))
+                        ac-nrepl
+                        magit))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -36,12 +38,15 @@
 
 (setq-default indent-tabs-mode nil
               make-backup-files nil
-              split-width-threshold nil
-              nrepl-popup-stacktraces nil)
+              split-width-threshold nil)
+
+(add-hook 'clojure-mode-hook 'show-paren-mode)
+(add-hook 'nrepl-mode-hook 'show-paren-mode)
 
 (when (require 'paredit nil t)
   (add-hook 'nrepl-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'paredit-mode))
+  (add-hook 'clojure-mode-hook 'paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
 (when (require 'auto-complete nil t)
   (add-hook 'nrepl-mode-hook 'auto-complete-mode)
@@ -49,7 +54,14 @@
 
 (when (require 'rainbow-delimiters nil t)
   (add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode))
+  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+
+  ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
+  (dolist (i (number-sequence 1 9))
+    (set-face-foreground (intern (rainbow-delimiters-depth-face i))
+                         (let ((c (+ ?\x40 (* i 8))))
+                           (format "#%X%X%X" c c ?\x30)))))
 
 (when (require 'ac-nrepl nil t)
   (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
@@ -101,7 +113,6 @@
 (require 'webkit-merging)
 
 (defvar per-host-init-file (concat (file-name-directory (locate-library "init")) "hosts/" (system-name) ".el"))
-(message per-host-init-file)
 
 (if (file-exists-p per-host-init-file)
     (load per-host-init-file))
