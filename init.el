@@ -36,7 +36,7 @@
 
   ;; Wombat's background color is too light in transparent Terminal windows, so darken it up.
   (unless (display-graphic-p)
-    (set-face-background 'default "#111")))
+    (set-face-background 'default "#0a0a0a")))
 
 (ido-mode)
 
