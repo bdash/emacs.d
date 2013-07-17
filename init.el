@@ -1,5 +1,8 @@
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
+(menu-bar-mode -1)
+
+(require 'cl)
 
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
@@ -47,46 +50,44 @@
 (add-hook 'clojure-mode-hook 'show-paren-mode)
 (add-hook 'nrepl-mode-hook 'show-paren-mode)
 
-(when (require 'paredit nil t)
-  (add-hook 'nrepl-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+(add-hook 'nrepl-mode-hook 'paredit-mode)
+(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 
-(when (require 'auto-complete nil t)
-  (add-hook 'nrepl-mode-hook 'auto-complete-mode)
-  (add-hook 'clojure-mode-hook 'auto-complete-mode))
+(autoload  'auto-complete-mode "auto-complete-config")
+(add-hook 'nrepl-mode-hook 'auto-complete-mode)
+(add-hook 'clojure-mode-hook 'auto-complete-mode)
 
-(when (require 'rainbow-delimiters nil t)
-  (add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 
+(eval-after-load "rainbow-delimiters"
   ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
-  (dolist (i (number-sequence 1 9))
-    (set-face-foreground (intern (rainbow-delimiters-depth-face i))
-                         (let ((c (+ ?\x40 (* i 8))))
-                           (format "#%X%X%X" c c ?\x30)))))
+  '(dolist (i (number-sequence 1 9))
+     (set-face-foreground (intern (rainbow-delimiters-depth-face i))
+                          (let ((c (+ ?\x40 (* i 8))))
+                            (format "#%X%X%X" c c ?\x30)))))
 
-(when (require 'ac-nrepl nil t)
-  (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-  (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
-  (eval-after-load "auto-complete"
-    '(add-to-list 'ac-modes 'nrepl-mode))
+(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+(add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
 
-  (defun set-auto-complete-as-completion-at-point-function ()
-    (setq completion-at-point-functions '(auto-complete)))
-  (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+(eval-after-load "auto-complete"
+  '(progn
+     (add-to-list 'ac-modes 'nrepl-mode)
 
-  (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
-  (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function))
+     (defun set-auto-complete-as-completion-at-point-function ()
+       (setq completion-at-point-functions '(auto-complete)))
+     (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+
+     (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
 
 
-
-(defun my-c-mode-common-hook ()
-  (setq tab-width 8
-        c-basic-offset 4))
-
-(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
+(add-hook 'c-mode-common-hook
+          '(lambda ()
+             (setq tab-width 8
+                   c-basic-offset 4)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -120,7 +121,6 @@
    (tty-set-up-initial-frame-faces)) 
 
 (require 'util)
-(require 'cl)
 (require 'webkit)
 (require 'webkit-merging)
 
