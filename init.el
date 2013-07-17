@@ -32,7 +32,11 @@
       (package-install p))))
 
 (when (>= emacs-major-version 24)
-  (load-theme 'wombat t))
+  (load-theme 'wombat t)
+
+  ;; Wombat's background color is too light in transparent Terminal windows, so darken it up.
+  (unless (display-graphic-p)
+    (set-face-background 'default "#111")))
 
 (ido-mode)
 
