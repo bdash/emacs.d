@@ -107,6 +107,14 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:height 100)))))
 
+(load "term/xterm") 
+
+(defun terminal-init-screen () 
+   "Terminal initialization function for screen." 
+   ;; Use the xterm color initialization code. 
+   (xterm-register-default-colors) 
+   (tty-set-up-initial-frame-faces)) 
+
 (require 'util)
 (require 'cl)
 (require 'webkit)
