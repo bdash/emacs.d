@@ -50,17 +50,19 @@
 (add-hook 'clojure-mode-hook 'show-paren-mode)
 (add-hook 'nrepl-mode-hook 'show-paren-mode)
 
-(add-hook 'nrepl-mode-hook 'paredit-mode)
-(add-hook 'clojure-mode-hook 'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+(when (or (featurep 'paredit-mode) (featurep 'paredit-mode-autoloads))
+  (add-hook 'nrepl-mode-hook 'paredit-mode)
+  (add-hook 'clojure-mode-hook 'paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
 (autoload  'auto-complete-mode "auto-complete-config")
 (add-hook 'nrepl-mode-hook 'auto-complete-mode)
 (add-hook 'clojure-mode-hook 'auto-complete-mode)
 
-(add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-(add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+(when (or (featurep 'rainbow-delimiters) (featurep 'rainbow-delimiters-autoloads))
+  (add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
 
 (eval-after-load "rainbow-delimiters"
   ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
@@ -69,8 +71,9 @@
                           (let ((c (+ ?\x40 (* i 8))))
                             (format "#%X%X%X" c c ?\x30)))))
 
-(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-(add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
+(when (or (featurep 'ac-nrepl) (featurep 'rainbow-delimiters-autoloads))
+  (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+  (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup))
 
 (eval-after-load "auto-complete"
   '(progn
