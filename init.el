@@ -29,7 +29,8 @@
                         rainbow-delimiters
                         auto-complete
                         ac-nrepl
-                        magit))
+                        magit
+                        git-commit-mode))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -86,6 +87,7 @@
      (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
      (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
 
+(add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG.edit\\'" . git-commit-mode))
 
 (add-hook 'c-mode-common-hook
           '(lambda ()
@@ -122,6 +124,9 @@
    ;; Use the xterm color initialization code. 
    (xterm-register-default-colors) 
    (tty-set-up-initial-frame-faces)) 
+
+(add-to-list 'backup-directory-alist
+             (cons tramp-file-name-regexp nil))
 
 (require 'util)
 (require 'webkit)
