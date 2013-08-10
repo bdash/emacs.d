@@ -98,6 +98,12 @@
                                                   magic-mode-regexp-match-limit t)))
                   . objc-mode))
 
+(require 'find-file)
+(add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
+(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h")))
+(add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm")))
+(add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
+
 (add-hook 'c-mode-common-hook
           '(lambda ()
              (setq tab-width 8
