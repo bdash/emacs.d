@@ -1,6 +1,7 @@
 (when (fboundp 'tool-bar-mode)
   (tool-bar-mode -1))
 (menu-bar-mode -1)
+(scroll-bar-mode -1)
 
 (require 'cl)
 
@@ -88,6 +89,14 @@
      (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
 
 (add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG.edit\\'" . git-commit-mode))
+(add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+(add-to-list 'magic-mode-alist
+                `(,(lambda ()
+                     (and (string= (file-name-extension buffer-file-name) "h")
+                          (re-search-forward "@\\<interface\\>" 
+                                                  magic-mode-regexp-match-limit t)))
+                  . objc-mode))
 
 (add-hook 'c-mode-common-hook
           '(lambda ()
@@ -115,7 +124,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 100)))))
+ '(default ((t (:height 100))))
+ '(mode-line ((t nil))))
 
 (load "term/xterm") 
 
