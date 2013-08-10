@@ -52,7 +52,7 @@
 (add-hook 'clojure-mode-hook 'show-paren-mode)
 (add-hook 'nrepl-mode-hook 'show-paren-mode)
 
-(when (or (featurep 'paredit-mode) (featurep 'paredit-mode-autoloads))
+(when (or (featurep 'paredit) (featurep 'paredit-autoloads))
   (add-hook 'nrepl-mode-hook 'paredit-mode)
   (add-hook 'clojure-mode-hook 'paredit-mode)
   (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
