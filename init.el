@@ -31,7 +31,10 @@
                         auto-complete
                         ac-nrepl
                         magit
-                        git-commit-mode))
+                        git-commit-mode
+                        ace-jump-mode
+                        ido-ubiquitous
+                        idomenu))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -44,6 +47,8 @@
     (set-face-background 'default "#0a0a0a")))
 
 (ido-mode)
+(when (require 'ido-ubiquitous nil t)
+  (ido-ubiquitous))
 
 (setq-default indent-tabs-mode nil
               make-backup-files nil
@@ -87,6 +92,13 @@
 
      (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
      (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
+
+(when (or (featurep 'ace-jump-mode) (featurep 'ace-jump-mode-autoloads))
+  (progn
+     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+     (define-key global-map (kbd "C-c C-SPC") 'ace-jump-mode)))
+
+(autoload 'idomenu "idomenu" nil t)
 
 (add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG.edit\\'" . git-commit-mode))
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
