@@ -1,9 +1,8 @@
-(when (fboundp 'tool-bar-mode)
-  (tool-bar-mode -1))
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-
 (require 'cl)
+
+(cl-map nil (lambda (fn) (when (fboundp fn)
+			   (funcall fn -1)))
+	'(tool-bar-mode menu-bar-mode scroll-bar-mode))
 
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
