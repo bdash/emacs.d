@@ -56,6 +56,7 @@
 
 (add-hook 'clojure-mode-hook 'show-paren-mode)
 (add-hook 'cider-mode-hook 'show-paren-mode)
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
 (when (or (featurep 'paredit) (featurep 'paredit-autoloads))
   (add-hook 'cider-mode-hook 'paredit-mode)
