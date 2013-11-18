@@ -75,7 +75,7 @@
   ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
   '(dolist (i (number-sequence 1 9))
      (set-face-foreground (rainbow-delimiters-depth-face i)
-                          (let ((c (+ ?\x40 (* i 8))))
+                          (let ((c (+ ?\x40 (* i 12))))
                             (format "#%X%X%X" c c ?\x30)))))
 
 (when (or (featurep 'ac-nrepl) (featurep 'rainbow-delimiters-autoloads))
