@@ -15,6 +15,7 @@
 
 (when (require 'package nil t)
   (add-to-list 'package-archives
+               '("melpa" . "http://melpa.milkbox.net/packages/")
                '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
 
@@ -24,7 +25,7 @@
   (defvar my-packages '(color-theme
                         clojure-mode
                         clojure-test-mode
-                        nrepl
+                        cider
                         paredit
                         rainbow-delimiters
                         auto-complete
@@ -54,43 +55,43 @@
               split-width-threshold nil)
 
 (add-hook 'clojure-mode-hook 'show-paren-mode)
-(add-hook 'nrepl-mode-hook 'show-paren-mode)
+(add-hook 'cider-mode-hook 'show-paren-mode)
 
 (when (or (featurep 'paredit) (featurep 'paredit-autoloads))
-  (add-hook 'nrepl-mode-hook 'paredit-mode)
+  (add-hook 'cider-mode-hook 'paredit-mode)
   (add-hook 'clojure-mode-hook 'paredit-mode)
   (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
 (autoload  'auto-complete-mode "auto-complete-config")
-(add-hook 'nrepl-mode-hook 'auto-complete-mode)
+(add-hook 'cider-mode-hook 'auto-complete-mode)
 (add-hook 'clojure-mode-hook 'auto-complete-mode)
 
 (when (or (featurep 'rainbow-delimiters) (featurep 'rainbow-delimiters-autoloads))
-  (add-hook 'nrepl-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
 
 (eval-after-load "rainbow-delimiters"
   ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
   '(dolist (i (number-sequence 1 9))
-     (set-face-foreground (intern (rainbow-delimiters-depth-face i))
+     (set-face-foreground (rainbow-delimiters-depth-face i)
                           (let ((c (+ ?\x40 (* i 8))))
                             (format "#%X%X%X" c c ?\x30)))))
 
 (when (or (featurep 'ac-nrepl) (featurep 'rainbow-delimiters-autoloads))
-  (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
-  (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup))
+  (add-hook 'cider-mode-hook 'ac-nrepl-setup)
+  (add-hook 'cider-interaction-mode-hook 'ac-nrepl-setup))
 
 (eval-after-load "auto-complete"
   '(progn
-     (add-to-list 'ac-modes 'nrepl-mode)
+     (add-to-list 'ac-modes 'cider-mode)
 
      (defun set-auto-complete-as-completion-at-point-function ()
        (setq completion-at-point-functions '(auto-complete)))
      (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
 
-     (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
-     (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
+     (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     (add-hook 'cider-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
 
 (when (or (featurep 'ace-jump-mode) (featurep 'ace-jump-mode-autoloads))
   (progn
