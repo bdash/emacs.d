@@ -8,10 +8,11 @@
                     (or (buffer-file-name) load-file-name)))
 (add-to-list 'load-path dotfiles-dir)
 
-; Tell emacs in two different ways that it may need to look in /usr/local/bin to find git
-(setenv "PATH" (concat "/usr/local/bin:" (getenv "PATH")))
-(add-to-list 'exec-path "/usr/local/bin")
-(add-to-list 'exec-path exec-directory)
+(if (not (getenv "TERM_PROGRAM"))
+    (let ((path (shell-command-to-string
+                 "$SHELL -cl \"printf %s \\\"\\\$PATH\\\"\"")))
+      (setenv "PATH" path)))
+
 
 (when (require 'package nil t)
   (add-to-list 'package-archives
