@@ -1,6 +1,6 @@
 (require 'cl)
 
-(cl-map nil (lambda (fn) (when (fboundp fn)
+(mapc (lambda (fn) (when (fboundp fn)
 			   (funcall fn -1)))
 	'(tool-bar-mode menu-bar-mode scroll-bar-mode))
 
