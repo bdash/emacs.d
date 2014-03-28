@@ -115,13 +115,21 @@
 (require 'find-file)
 (add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
 (add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h")))
-(add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm")))
+(add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp")))
 (add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
+
+
+(defconst webkit-cc-style
+  '("user"
+    (c-offsets-alist . ((innamespace . [0])))))
+(c-add-style "webkit" webkit-cc-style)
 
 (add-hook 'c-mode-common-hook
           '(lambda ()
              (setq tab-width 8
-                   c-basic-offset 4)))
+                   c-basic-offset 4
+                   c-default-style "webkit")))
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
