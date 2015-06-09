@@ -14,7 +14,7 @@
 
 (when (require 'package nil t)
   (add-to-list 'package-archives
-               '("melpa" . "http://melpa.milkbox.net/packages/")
+               '("melpa" . "http://melpa.org/packages/")
                '("marmalade" . "http://marmalade-repo.org/packages/"))
   (package-initialize)
 
@@ -23,12 +23,11 @@
 
   (defvar my-packages '(color-theme
                         clojure-mode
-                        clojure-test-mode
                         cider
                         paredit
                         rainbow-delimiters
                         auto-complete
-                        ac-nrepl
+                        ac-cider
                         magit
                         git-commit-mode
                         ace-jump-mode
