@@ -29,7 +29,6 @@
                         auto-complete
                         ac-cider
                         magit
-                        git-commit-mode
                         ace-jump-mode
                         ido-ubiquitous
                         idomenu))
