@@ -31,7 +31,8 @@
                         magit
                         ace-jump-mode
                         ido-ubiquitous
-                        idomenu))
+                        idomenu
+                        markdown-mode+))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -139,6 +140,7 @@
  '(fill-column 120)
  '(ns-antialias-text t)
  '(ns-use-qd-smoothing nil)
+ '(safe-local-variable-values (quote ((c-file-offsets (innamespace . 0)))))
  '(size-indication-mode t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(vc-handled-backends (quote nil)))
