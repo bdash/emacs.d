@@ -44,6 +44,8 @@
   (unless (display-graphic-p)
     (set-face-background 'default "#0a0a0a")))
 
+(require 'git-commit)
+
 (ido-mode)
 (when (require 'ido-ubiquitous nil t)
   (ido-ubiquitous))
