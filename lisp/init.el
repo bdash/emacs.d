@@ -163,10 +163,15 @@
 
 (eval-after-load 'magit
   '(progn
-     (set-face-foreground 'magit-diff-add "green3")
-     (set-face-foreground 'magit-diff-del "red3")
      (when (not window-system)
-       (set-face-background 'magit-item-highlight "black"))))
+       (set-face-foreground 'magit-diff-added "green3")
+       (set-face-foreground 'magit-diff-removed "red3")
+       (set-face-foreground 'magit-diff-added-highlight "green3")
+       (set-face-foreground 'magit-diff-removed-highlight "red3")
+       (set-face-background 'magit-diff-added "gray10")
+       (set-face-background 'magit-diff-removed "gray10")
+       (set-face-background 'magit-diff-added-highlight "gray10")
+       (set-face-background 'magit-diff-removed-highlight "gray10"))))
 
 (add-to-list 'backup-directory-alist
              (cons tramp-file-name-regexp nil))
