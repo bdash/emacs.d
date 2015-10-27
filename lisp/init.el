@@ -134,7 +134,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(add-log-full-name "Mark Rowe")
- '(add-log-mailing-address "mrowe@apple.com")
+ '(add-log-mailing-address "mrowe@bdash.net.nz")
  '(change-log-version-number-regexp-list (list "Merge r\\([0-9]+\\)"))
  '(column-number-mode t)
  '(fill-column 120)
