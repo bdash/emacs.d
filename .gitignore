@@ -1,7 +1,8 @@
 /auto-save-list/
+/elpa/
+/irony/
+/tramp
 *~
 *.elc
-/tramp
-/elpa
 ac-comphist.dat
 ido.last
