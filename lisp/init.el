@@ -32,7 +32,13 @@
                         ace-jump-mode
                         ido-ubiquitous
                         idomenu
-                        markdown-mode+))
+                        markdown-mode+
+                        company
+                        irony
+                        company-irony
+                        flycheck
+                        flycheck-irony
+                        ))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -110,10 +116,33 @@
 
 (require 'find-file)
 (add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
-(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h")))
+(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h" ".hpp")))
 (add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp")))
 (add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
 
+(defun enable-irony-mode-if-server-available ()
+  (require 'irony)
+  (when (irony--locate-server-executable)
+    (irony-mode)))
+(add-hook 'c-mode-common-hook 'enable-irony-mode-if-server-available)
+
+(eval-after-load 'irony
+  '(when (irony--locate-server-executable)
+     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+     (eval-after-load 'company
+       '(add-to-list 'company-backends 'company-irony))
+     (eval-after-load 'flycheck
+       '(add-hook 'flycheck-mode-hook 'flycheck-irony-setup))))
+
+(eval-after-load 'company
+  '(global-set-key "\M-/" 'company-complete-common))
+
+(eval-after-load 'flycheck
+  '(setq flycheck-check-syntax-automatically '(mode-enabled save idle-change new-line)
+         flycheck-display-errors-delay 0.01))
+
+(add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'after-init-hook 'global-flycheck-mode)
 (add-hook 'after-init-hook 'global-git-commit-mode)
 
 (defconst webkit-cc-style
