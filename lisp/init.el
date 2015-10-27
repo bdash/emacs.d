@@ -32,7 +32,13 @@
                         ace-jump-mode
                         ido-ubiquitous
                         idomenu
-                        markdown-mode+))
+                        markdown-mode+
+                        company
+                        irony
+                        company-irony
+                        flycheck
+                        flycheck-irony
+                        ))
   (dolist (p my-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -43,8 +49,6 @@
   ;; Wombat's background color is too light in transparent Terminal windows, so darken it up.
   (unless (display-graphic-p)
     (set-face-background 'default "#0a0a0a")))
-
-(require 'git-commit)
 
 (ido-mode)
 (when (require 'ido-ubiquitous nil t)
@@ -58,10 +62,9 @@
 (add-hook 'cider-mode-hook 'show-paren-mode)
 (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
-(when (or (featurep 'paredit) (featurep 'paredit-autoloads))
-  (add-hook 'cider-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+(add-hook 'cider-mode-hook 'paredit-mode)
+(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 
 (autoload  'auto-complete-mode "auto-complete-config")
 (add-hook 'cider-mode-hook 'auto-complete-mode)
@@ -113,10 +116,34 @@
 
 (require 'find-file)
 (add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
-(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h")))
+(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h" ".hpp")))
 (add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp")))
 (add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
 
+(defun enable-irony-mode-if-server-available ()
+  (require 'irony)
+  (when (irony--locate-server-executable)
+    (irony-mode)))
+(add-hook 'c-mode-common-hook 'enable-irony-mode-if-server-available)
+
+(eval-after-load 'irony
+  '(when (irony--locate-server-executable)
+     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+     (eval-after-load 'company
+       '(add-to-list 'company-backends 'company-irony))
+     (eval-after-load 'flycheck
+       '(add-hook 'flycheck-mode-hook 'flycheck-irony-setup))))
+
+(eval-after-load 'company
+  '(global-set-key "\M-/" 'company-complete-common))
+
+(eval-after-load 'flycheck
+  '(setq flycheck-check-syntax-automatically '(mode-enabled save idle-change new-line)
+         flycheck-display-errors-delay 0.01))
+
+(add-hook 'after-init-hook 'global-company-mode)
+(add-hook 'after-init-hook 'global-flycheck-mode)
+(add-hook 'after-init-hook 'global-git-commit-mode)
 
 (defconst webkit-cc-style
   '("user"
@@ -136,7 +163,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(add-log-full-name "Mark Rowe")
- '(add-log-mailing-address "mrowe@apple.com")
+ '(add-log-mailing-address "mrowe@bdash.net.nz")
  '(change-log-version-number-regexp-list (list "Merge r\\([0-9]+\\)"))
  '(column-number-mode t)
  '(fill-column 120)
