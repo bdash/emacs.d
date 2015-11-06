@@ -21,88 +21,96 @@
   (when (not package-archive-contents)
     (package-refresh-contents))
 
-  (defvar my-packages '(color-theme
-                        clojure-mode
-                        cider
-                        paredit
-                        rainbow-delimiters
-                        auto-complete
-                        ac-cider
-                        magit
-                        ace-jump-mode
-                        ido-ubiquitous
-                        idomenu
-                        markdown-mode+
-                        company
-                        irony
-                        company-irony
-                        flycheck
-                        flycheck-irony
-                        ))
-  (dolist (p my-packages)
-    (when (not (package-installed-p p))
-      (package-install p))))
+  (when (not (package-installed-p 'use-package))
+    (package-install 'use-package)))
 
-(when (>= emacs-major-version 24)
+(require 'use-package)
+
+(use-package color-theme
+  :ensure t
+  :config
   (load-theme 'wombat t)
-
   ;; Wombat's background color is too light in transparent Terminal windows, so darken it up.
   (unless (display-graphic-p)
     (set-face-background 'default "#0a0a0a")))
 
-(ido-mode)
-(when (require 'ido-ubiquitous nil t)
-  (ido-ubiquitous))
+(use-package ido
+  :config
+  (ido-mode))
+(use-package idomenu :ensure t)
+(use-package ido-ubiquitous :ensure t)
 
-(setq-default indent-tabs-mode nil
-              make-backup-files nil
-              split-width-threshold nil)
+(use-package markdown-mode+
+  :ensure t
+  :commands markdown-mode
+  :mode ("\\.md$" . markdown-mode))
 
-(add-hook 'clojure-mode-hook 'show-paren-mode)
-(add-hook 'cider-mode-hook 'show-paren-mode)
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+(use-package paredit
+  :ensure t
+  :commands paredit-mode
+  :init
+  (add-hook 'cider-mode-hook 'paredit-mode)
+  (add-hook 'clojure-mode-hook 'paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
-(add-hook 'cider-mode-hook 'paredit-mode)
-(add-hook 'clojure-mode-hook 'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 
-(autoload  'auto-complete-mode "auto-complete-config")
-(add-hook 'cider-mode-hook 'auto-complete-mode)
-(add-hook 'clojure-mode-hook 'auto-complete-mode)
+(use-package clojure-mode
+  :ensure t
+  :mode "\\.clj$"
+  :config
+  (add-hook 'clojure-mode-hook 'show-paren-mode)
+  (add-hook 'clojure-mode-hook 'auto-complete-mode))
 
-(when (or (featurep 'rainbow-delimiters) (featurep 'rainbow-delimiters-autoloads))
-  (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
+(use-package cider
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'cider-mode-hook 'show-paren-mode)
+  (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode))
 
-(eval-after-load "rainbow-delimiters"
-  ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
-  '(dolist (i (number-sequence 1 9))
-     (set-face-foreground (rainbow-delimiters-depth-face i)
-                          (let ((c (+ ?\x40 (* i 12))))
-                            (format "#%X%X%X" c c ?\x30)))))
+(use-package auto-complete
+  :ensure t
+  :commands auto-complete-mode
+  :init
+  (add-hook 'cider-mode-hook 'auto-complete-mode)
 
-(when (or (featurep 'ac-nrepl) (featurep 'rainbow-delimiters-autoloads))
+  :config
+  (add-to-list 'ac-modes 'cider-mode)
+
+  (defun set-auto-complete-as-completion-at-point-function ()
+    (setq completion-at-point-functions '(auto-complete)))
+  (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+
+  (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
+  (add-hook 'cider-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function))
+
+(use-package ac-cider
+  :ensure t
+  :commands ac-cider-setup
+  :init
   (add-hook 'cider-mode-hook 'ac-nrepl-setup)
   (add-hook 'cider-interaction-mode-hook 'ac-nrepl-setup))
 
-(eval-after-load "auto-complete"
-  '(progn
-     (add-to-list 'ac-modes 'cider-mode)
+(use-package rainbow-delimiters
+  :ensure t
+  :commands rainbow-delimiters-mode
+  :init
+  (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
 
-     (defun set-auto-complete-as-completion-at-point-function ()
-       (setq completion-at-point-functions '(auto-complete)))
-     (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+  :config
+  ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
+  (dolist (i (number-sequence 1 9))
+    (set-face-foreground (intern (format "rainbow-delimiters-depth-%d-face" i))
+                          (let ((c (+ ?\x40 (* i 12))))
+                            (format "#%X%X%X" c c ?\x30)))))
 
-     (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
-     (add-hook 'cider-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)))
-
-(when (or (featurep 'ace-jump-mode) (featurep 'ace-jump-mode-autoloads))
-  (progn
-     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-     (define-key global-map (kbd "C-c C-SPC") 'ace-jump-mode)))
-
-(autoload 'idomenu "idomenu" nil t)
+(use-package ace-jump-mode
+  :ensure t
+  :bind
+  ("C-c SPC" . ace-jump-mode)
+  ("C-c C-SPC" . ace-jump-mode))
 
 (add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG.edit\\'" . git-commit-mode))
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
@@ -110,40 +118,77 @@
 (add-to-list 'magic-mode-alist
                 `(,(lambda ()
                      (and (string= (file-name-extension buffer-file-name) "h")
-                          (re-search-forward "@\\<interface\\>" 
+                          (re-search-forward "@\\<interface\\>"
                                                   magic-mode-regexp-match-limit t)))
                   . objc-mode))
 
-(require 'find-file)
-(add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
-(add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h" ".hpp")))
-(add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp")))
-(add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
+(use-package find-file
+  :commands ff-find-other-file
+  :init
+  (add-hook 'c-mode-common-hook '(lambda () (local-set-key "\C-ct" 'ff-find-other-file)))
+  :config
+  (add-to-list 'cc-other-file-alist '("\\.m\\'" (".h")))
+  (add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h" ".hpp")))
+  (add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp"))))
 
-(defun enable-irony-mode-if-server-available ()
-  (require 'irony)
+(use-package irony
+  :ensure t
+  :commands irony-mode irony--locate-server-executable
+  :init
+  (defun enable-irony-mode-if-server-available ()
+    (when (irony--locate-server-executable)
+      (irony-mode)))
+  (add-hook 'c-mode-common-hook 'enable-irony-mode-if-server-available)
+
+  :config
   (when (irony--locate-server-executable)
-    (irony-mode)))
-(add-hook 'c-mode-common-hook 'enable-irony-mode-if-server-available)
-
-(eval-after-load 'irony
-  '(when (irony--locate-server-executable)
      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
      (eval-after-load 'company
        '(add-to-list 'company-backends 'company-irony))
      (eval-after-load 'flycheck
        '(add-hook 'flycheck-mode-hook 'flycheck-irony-setup))))
 
-(eval-after-load 'company
-  '(global-set-key "\M-/" 'company-complete-common))
+(use-package company
+  :ensure t
+  :demand t
+  :bind ("\M-/" . company-complete-common)
+  :config (global-company-mode))
 
-(eval-after-load 'flycheck
-  '(setq flycheck-check-syntax-automatically '(mode-enabled save idle-change new-line)
-         flycheck-display-errors-delay 0.01))
+(use-package company-irony
+  :ensure t
+  :commands company-irony)
 
-(add-hook 'after-init-hook 'global-company-mode)
-(add-hook 'after-init-hook 'global-flycheck-mode)
-(add-hook 'after-init-hook 'global-git-commit-mode)
+(use-package flycheck
+  :ensure t
+  :demand t
+  :config
+  (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change new-line)
+        flycheck-display-errors-delay 0.01)
+  (global-flycheck-mode))
+
+(use-package flycheck-irony
+  :ensure t
+  :commands flycheck-irony-setup)
+
+(use-package magit
+  :ensure t
+  :commands magit-mode
+  :config
+  (when (not window-system)
+    (set-face-foreground 'magit-diff-added "green3")
+    (set-face-foreground 'magit-diff-removed "red3")
+    (set-face-foreground 'magit-diff-added-highlight "green3")
+    (set-face-foreground 'magit-diff-removed-highlight "red3")
+    (set-face-background 'magit-diff-added "gray10")
+    (set-face-background 'magit-diff-removed "gray10")
+    (set-face-background 'magit-diff-added-highlight "gray10")
+    (set-face-background 'magit-diff-removed-highlight "gray10")))
+
+(use-package git-commit
+  :ensure t
+  :demand t
+  :config
+  (global-git-commit-mode))
 
 (defconst webkit-cc-style
   '("user"
@@ -156,6 +201,10 @@
                    c-basic-offset 4
                    c-default-style "webkit")))
 
+
+(setq-default indent-tabs-mode nil
+              make-backup-files nil
+              split-width-threshold nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -182,25 +231,13 @@
  '(default ((t (:height 100))))
  '(mode-line ((t nil))))
 
-(load "term/xterm") 
+(load "term/xterm")
 
-(defun terminal-init-screen () 
-   "Terminal initialization function for screen." 
-   ;; Use the xterm color initialization code. 
-   (xterm-register-default-colors) 
-   (tty-set-up-initial-frame-faces)) 
-
-(eval-after-load 'magit
-  '(progn
-     (when (not window-system)
-       (set-face-foreground 'magit-diff-added "green3")
-       (set-face-foreground 'magit-diff-removed "red3")
-       (set-face-foreground 'magit-diff-added-highlight "green3")
-       (set-face-foreground 'magit-diff-removed-highlight "red3")
-       (set-face-background 'magit-diff-added "gray10")
-       (set-face-background 'magit-diff-removed "gray10")
-       (set-face-background 'magit-diff-added-highlight "gray10")
-       (set-face-background 'magit-diff-removed-highlight "gray10"))))
+(defun terminal-init-screen ()
+   "Terminal initialization function for screen."
+   ;; Use the xterm color initialization code.
+   (xterm-register-default-colors)
+   (tty-set-up-initial-frame-faces))
 
 (add-to-list 'backup-directory-alist
              (cons tramp-file-name-regexp nil))
