@@ -45,14 +45,22 @@
   :commands markdown-mode
   :mode ("\\.md$" . markdown-mode))
 
-(use-package paredit
+(use-package smartparens
   :ensure t
-  :commands paredit-mode
+  :commands smartparens-mode show-smartparens-mode
   :init
-  (add-hook 'cider-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
-
+  (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+  (add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
+  (add-hook 'clojure-mode-hook 'smartparens-mode)
+  (add-hook 'clojure-mode-hook 'show-smartparens-mode)
+  (add-hook 'cider-mode-hook 'smartparens-mode)
+  (add-hook 'cider-mode-hook 'show-smartparens-mode)
+  :config
+  (use-package smartparens-config)
+  (sp-use-paredit-bindings)
+  (add-hook 'smartparens-mode-hook 'smartparens-strict-mode)
+  (set-face-background 'sp-show-pair-match-face nil)
+  (set-face-foreground 'sp-show-pair-match-face "#cae682"))
 
 (use-package clojure-mode
   :ensure t
