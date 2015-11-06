@@ -131,6 +131,10 @@
   (add-to-list 'cc-other-file-alist '("\\.mm\\'" (".h" ".hpp")))
   (add-to-list 'cc-other-file-alist '("\\.h\\'" (".m" ".mm" ".cpp"))))
 
+(use-package flycheck-irony
+  :ensure t
+  :commands flycheck-irony-setup)
+
 (use-package irony
   :ensure t
   :commands irony-mode irony--locate-server-executable
@@ -165,10 +169,6 @@
   (setq flycheck-check-syntax-automatically '(mode-enabled save idle-change new-line)
         flycheck-display-errors-delay 0.01)
   (global-flycheck-mode))
-
-(use-package flycheck-irony
-  :ensure t
-  :commands flycheck-irony-setup)
 
 (use-package magit
   :ensure t
