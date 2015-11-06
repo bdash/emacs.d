@@ -1,30 +1,23 @@
-(require 'cl)
+(require 'cl-lib)
 
 (mapc (lambda (fn) (when (fboundp fn)
 			   (funcall fn -1)))
 	'(tool-bar-mode menu-bar-mode scroll-bar-mode))
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+(eval-and-compile
+  (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(if (not (getenv "TERM_PROGRAM"))
-    (let ((path (shell-command-to-string
-                 "$SHELL -cl \"printf %s \\\"\\\$PATH\\\"\"")))
-      (setenv "PATH" path)))
+  (require 'package)
+     (add-to-list 'package-archives
+                  '("melpa" . "http://melpa.org/packages/")
+                  '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-
-(when (require 'package nil t)
-  (add-to-list 'package-archives
-               '("melpa" . "http://melpa.org/packages/")
-               '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (setq package-enable-at-startup nil)
   (package-initialize)
-
-  (when (not package-archive-contents)
-    (package-refresh-contents))
-
-  (when (not (package-installed-p 'use-package))
-    (package-install 'use-package)))
-
-(require 'use-package)
+  (unless (require 'use-package nil t)
+    (package-refresh-contents)
+    (package-install 'use-package)
+    (require 'use-package)))
 
 (use-package color-theme
   :ensure t
@@ -120,7 +113,6 @@
   ("C-c SPC" . ace-jump-mode)
   ("C-c C-SPC" . ace-jump-mode))
 
-(add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG.edit\\'" . git-commit-mode))
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
 
 (add-to-list 'magic-mode-alist
@@ -194,9 +186,8 @@
 
 (use-package git-commit
   :ensure t
-  :demand t
   :config
-  (global-git-commit-mode))
+  :mode ("/\\(\\(\\(COMMIT\\|NOTES\\|PULLREQ\\|TAG\\)_EDIT\\|MERGE_\\|\\)MSG\\|BRANCH_DESCRIPTION\\)\\'" . git-commit-mode))
 
 (defconst webkit-cc-style
   '("user"
