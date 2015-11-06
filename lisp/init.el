@@ -8,9 +8,10 @@
   (add-to-list 'load-path "~/.emacs.d/lisp/")
 
   (require 'package)
-     (add-to-list 'package-archives
-                  '("melpa" . "http://melpa.org/packages/")
-                  '("marmalade" . "http://marmalade-repo.org/packages/"))
+  (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+  (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+
+  (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
 
   (setq package-enable-at-startup nil)
   (package-initialize)
@@ -46,51 +47,26 @@
   (add-hook 'emacs-lisp-mode-hook 'show-smartparens-mode)
   (add-hook 'clojure-mode-hook 'smartparens-mode)
   (add-hook 'clojure-mode-hook 'show-smartparens-mode)
-  (add-hook 'cider-mode-hook 'smartparens-mode)
-  (add-hook 'cider-mode-hook 'show-smartparens-mode)
+  (add-hook 'cider-repl-mode-hook 'smartparens-mode)
+  (add-hook 'cider-repl-mode-hook 'show-smartparens-mode)
   :config
   (use-package smartparens-config)
   (sp-use-paredit-bindings)
   (add-hook 'smartparens-mode-hook 'smartparens-strict-mode)
   (set-face-background 'sp-show-pair-match-face nil)
-  (set-face-foreground 'sp-show-pair-match-face "#cae682"))
+  (set-face-foreground 'sp-show-pair-match-face "#cae682")
+  (setq sp-highlight-pair-overlay nil))
 
 (use-package clojure-mode
   :ensure t
   :mode "\\.clj$"
-  :config
-  (add-hook 'clojure-mode-hook 'show-paren-mode)
-  (add-hook 'clojure-mode-hook 'auto-complete-mode))
+  :config)
 
 (use-package cider
   :ensure t
   :defer t
   :config
-  (add-hook 'cider-mode-hook 'show-paren-mode)
   (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode))
-
-(use-package auto-complete
-  :ensure t
-  :commands auto-complete-mode
-  :init
-  (add-hook 'cider-mode-hook 'auto-complete-mode)
-
-  :config
-  (add-to-list 'ac-modes 'cider-mode)
-
-  (defun set-auto-complete-as-completion-at-point-function ()
-    (setq completion-at-point-functions '(auto-complete)))
-  (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-
-  (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
-  (add-hook 'cider-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function))
-
-(use-package ac-cider
-  :ensure t
-  :commands ac-cider-setup
-  :init
-  (add-hook 'cider-mode-hook 'ac-nrepl-setup)
-  (add-hook 'cider-interaction-mode-hook 'ac-nrepl-setup))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -99,6 +75,7 @@
   (add-hook 'cider-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
 
   :config
   ;; Have nested delimiters use increasingly lighter shaders of yellow-gray.
