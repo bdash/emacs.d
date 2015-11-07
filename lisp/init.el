@@ -90,15 +90,6 @@
   ("C-c SPC" . ace-jump-mode)
   ("C-c C-SPC" . ace-jump-mode))
 
-(add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
-
-(add-to-list 'magic-mode-alist
-                `(,(lambda ()
-                     (and (string= (file-name-extension buffer-file-name) "h")
-                          (re-search-forward "@\\<interface\\>"
-                                                  magic-mode-regexp-match-limit t)))
-                  . objc-mode))
-
 (use-package find-file
   :commands ff-find-other-file
   :init
@@ -165,6 +156,16 @@
   :ensure t
   :config
   :mode ("/\\(\\(\\(COMMIT\\|NOTES\\|PULLREQ\\|TAG\\)_EDIT\\|MERGE_\\|\\)MSG\\|BRANCH_DESCRIPTION\\)\\'" . git-commit-mode))
+
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
+
+(add-to-list 'magic-mode-alist
+                `(,(lambda ()
+                     (and (string= (file-name-extension buffer-file-name) "h")
+                          (re-search-forward "@\\<interface\\>"
+                                                  magic-mode-regexp-match-limit t)))
+                  . objc-mode))
 
 (defconst webkit-cc-style
   '("user"
