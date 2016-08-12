@@ -198,7 +198,8 @@
  '(safe-local-variable-values (quote ((c-file-offsets (innamespace . 0)))))
  '(size-indication-mode t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
- '(vc-handled-backends (quote nil)))
+ '(vc-handled-backends (quote nil))
+ '(ruby-insert-encoding-magic-comment nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
