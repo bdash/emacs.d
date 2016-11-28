@@ -157,6 +157,12 @@
   :config
   :mode ("/\\(\\(\\(COMMIT\\|NOTES\\|PULLREQ\\|TAG\\)_EDIT\\|MERGE_\\|\\)MSG\\|BRANCH_DESCRIPTION\\)\\'" . git-commit-mode))
 
+(use-package cmake-mode
+  :ensure t
+  :mode "\\(/CMakeLists.txt|\\.cmake\\)$"
+  :config
+  (setq cmake-tab-width 4))
+
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
 
