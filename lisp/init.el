@@ -163,6 +163,10 @@
   :config
   (setq cmake-tab-width 4))
 
+(use-package rust-mode
+  :ensure t
+  :mode "\\.rs$")
+
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
 
