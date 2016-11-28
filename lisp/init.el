@@ -194,9 +194,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(add-log-full-name "Mark Rowe")
- '(add-log-mailing-address "mrowe@bdash.net.nz")
- '(change-log-version-number-regexp-list (list "Merge r\\([0-9]+\\)"))
  '(column-number-mode t)
  '(fill-column 120)
  '(ns-antialias-text t)
@@ -227,8 +224,6 @@
              (cons tramp-file-name-regexp nil))
 
 (require 'util)
-(require 'webkit)
-(require 'webkit-merging)
 
 (defvar per-host-init-file (concat (file-name-directory (locate-library "init")) "hosts/" (system-name) ".el"))
 
