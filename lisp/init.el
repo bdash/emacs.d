@@ -32,7 +32,7 @@
   :config
   (ido-mode))
 (use-package idomenu :ensure t)
-(use-package ido-ubiquitous :ensure t)
+(use-package ido-completing-read+ :ensure t)
 
 (use-package markdown-mode+
   :ensure t
@@ -105,15 +105,15 @@
 
 (use-package irony
   :ensure t
-  :commands irony-mode irony--locate-server-executable
+  :commands irony-mode irony--find-server-executable
   :init
   (defun enable-irony-mode-if-server-available ()
-    (when (irony--locate-server-executable)
+    (when (irony--find-server-executable)
       (irony-mode)))
   (add-hook 'c-mode-common-hook 'enable-irony-mode-if-server-available)
 
   :config
-  (when (irony--locate-server-executable)
+  (when (irony--find-server-executable)
      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
      (eval-after-load 'company
        '(add-to-list 'company-backends 'company-irony))
@@ -202,11 +202,14 @@
  '(fill-column 120)
  '(ns-antialias-text t)
  '(ns-use-qd-smoothing nil)
+ '(package-selected-packages
+   (quote
+    (irony typescript-mode irony-eldoc use-package smartparens rust-mode rainbow-delimiters markdown-mode+ magit idomenu ido-completing-read+ flycheck-irony company-irony color-theme cmake-mode cider ace-jump-mode)))
+ '(ruby-insert-encoding-magic-comment nil)
  '(safe-local-variable-values (quote ((c-file-offsets (innamespace . 0)))))
  '(size-indication-mode t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
- '(vc-handled-backends (quote nil))
- '(ruby-insert-encoding-magic-comment nil))
+ '(vc-handled-backends (quote nil)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
